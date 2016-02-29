@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "stdint.h"
+#include "bcap/stdint.h"
 
 #if defined(_USE_WIN_API)
 #include <winsock2.h>
@@ -32,12 +32,12 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #else
-#include "dn_additional.h"
+#include "bcap/dn_additional.h"
 #endif
 
-#include "dn_common.h"
-#include "dn_device.h"
-#include "dn_socket.h"
+#include "bcap/dn_common.h"
+#include "bcap/dn_device.h"
+#include "bcap/dn_socket.h"
 
 int socket_counter;
 

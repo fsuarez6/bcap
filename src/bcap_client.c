@@ -21,7 +21,7 @@
  */
 
 #include <stdarg.h>
-#include "stdint.h"
+#include "bcap/stdint.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -32,18 +32,18 @@
 #include <arpa/inet.h>
 #include <termios.h>
 #else
-#include "dn_additional.h"
+#include "bcap/dn_additional.h"
 #endif
 
-#include "dn_common.h"
-#include "dn_device.h"
-#include "dn_tcp.h"
-#include "dn_udp.h"
-#include "dn_com.h"
-#include "dn_thread.h"
-#include "bcap_common.h"
-#include "bcap_funcid.h"
-#include "bcap_client.h"
+#include "bcap/dn_common.h"
+#include "bcap/dn_device.h"
+#include "bcap/dn_tcp.h"
+#include "bcap/dn_udp.h"
+#include "bcap/dn_com.h"
+#include "bcap/dn_thread.h"
+#include "bcap/bcap_common.h"
+#include "bcap/bcap_funcid.h"
+#include "bcap/bcap_client.h"
 
 /**
  * @def		_RETRY_MIN

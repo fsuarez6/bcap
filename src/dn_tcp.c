@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "stdint.h"
+#include "bcap/stdint.h"
 #include <string.h>
 
 #if defined(_USE_WIN_API)
@@ -33,13 +33,13 @@
 #include <netinet/tcp.h>
 #include <sys/socket.h>
 #else
-#include "dn_additional.h"
+#include "bcap/dn_additional.h"
 #endif
 
-#include "dn_common.h"
-#include "dn_device.h"
-#include "dn_socket.h"
-#include "dn_tcp.h"
+#include "bcap/dn_common.h"
+#include "bcap/dn_device.h"
+#include "bcap/dn_socket.h"
+#include "bcap/dn_tcp.h"
 
 #if defined(_USE_WIN_API)
 static HRESULT _tcp_set_keepalive(int sock, int enable, uint32_t idle, uint32_t interval, uint32_t count)

@@ -15,8 +15,7 @@ catkin_package(
     roscpp
 )
 
-include_directories(include)
-include_directories(${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 # Definitions
 add_definitions(-D_USE_LINUX_API)

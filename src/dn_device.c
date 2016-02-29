@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "stdint.h"
+#include "bcap/stdint.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -35,11 +35,11 @@
 #define strnicmp strncasecmp
 #endif
 #else
-#include "dn_additional.h"
+#include "bcap/dn_additional.h"
 #endif
 
-#include "dn_common.h"
-#include "dn_device.h"
+#include "bcap/dn_common.h"
+#include "bcap/dn_device.h"
 
 #define _STR_ISNUMERIC	"0123456789"
 

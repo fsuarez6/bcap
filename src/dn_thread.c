@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "stdint.h"
+#include "bcap/stdint.h"
 #include <stdlib.h>
 
 #if defined(_USE_WIN_API)
@@ -32,11 +32,11 @@
 #include <time.h>
 #include <sys/time.h>
 #else
-#include "dn_additional.h"
+#include "bcap/dn_additional.h"
 #endif
 
-#include "dn_common.h"
-#include "dn_thread.h"
+#include "bcap/dn_common.h"
+#include "bcap/dn_thread.h"
 
 #if defined(_USE_LINUX_API)
 /**

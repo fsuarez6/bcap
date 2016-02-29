@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "stdint.h"
+#include "bcap/stdint.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -30,7 +30,7 @@
 #if defined(_USE_LINUX_API)
 #include <arpa/inet.h>
 #else
-#include "dn_additional.h"
+#include "bcap/dn_additional.h"
 #endif
 
 /**
@@ -47,10 +47,10 @@
 
 #endif
 
-#include "dn_common.h"
-#include "dn_device.h"
-#include "dn_udp.h"
-#include "bcap_common.h"
+#include "bcap/dn_common.h"
+#include "bcap/dn_device.h"
+#include "bcap/dn_udp.h"
+#include "bcap/bcap_common.h"
 
 static HRESULT bcap_vntary2bytary(const VARIANT *src, uint32_t argc, char *dst, uint32_t len_dst, uint32_t *offset, int flag);
 static HRESULT bcap_bytary2vntary(const char *src, uint32_t len_src, VARIANT *dst, uint32_t argc, uint32_t *offset, int flag);

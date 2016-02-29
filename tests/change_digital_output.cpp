@@ -1,10 +1,10 @@
 // Always goes first
 #define _CUSTOM_UINT64
-#include "stdint.h"
+#include "bcap/stdint.h"
 // ROS
 #include <ros/ros.h>
 // bCAP (Always last)
-#include "bcap_client.h"
+#include "bcap/bcap_client.h"
 
 int main(int argc, char **argv)
 {

@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "stdint.h"
+#include "bcap/stdint.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -36,7 +36,7 @@
 #endif
 #endif
 
-#include "dn_common.h"
+#include "bcap/dn_common.h"
 
 /**
  * @def		_LEN_VARIANT2BSTR

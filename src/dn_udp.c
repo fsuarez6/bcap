@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "stdint.h"
+#include "bcap/stdint.h"
 #include <string.h>
 
 #if defined(_USE_WIN_API)
@@ -32,13 +32,13 @@ typedef int socklen_t;
 #include <errno.h>
 #include <sys/socket.h>
 #else
-#include "dn_additional.h"
+#include "bcap/dn_additional.h"
 #endif
 
-#include "dn_common.h"
-#include "dn_device.h"
-#include "dn_socket.h"
-#include "dn_udp.h"
+#include "bcap/dn_common.h"
+#include "bcap/dn_device.h"
+#include "bcap/dn_socket.h"
+#include "bcap/dn_udp.h"
 
 HRESULT udp_open(void *param, int *sock)
 {
