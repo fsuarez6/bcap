@@ -44,12 +44,12 @@ int main(int argc, char **argv)
 {
   ros::init (argc, argv, "slave_mode");
   ros::NodeHandle nh_;
-  int i, fd, ioVal;
+  int i, fd;
   long *plData;
-  uint32_t hCtrl, hRob, hVar;
+  uint32_t hCtrl, hRob;
   double *pdData, dAng[8];
   BSTR bstr1, bstr2, bstr3, bstr4;
-  VARIANT vntParam, vntRet;
+  VARIANT vntParam, vntRet, *pvntData;
   HRESULT hr;
 
   // Open connection
@@ -73,17 +73,6 @@ int main(int argc, char **argv)
     SysFreeString(bstr4);
     
     if(SUCCEEDED(hr)){
-      // Get IO handle
-      bstr1 = SysAllocString(L"IO24"); // Name
-      bstr2 = SysAllocString(L"");      // Option
-      hr = bCap_ControllerGetVariable(fd, hCtrl, bstr1, bstr1, &hVar);
-      SysFreeString(bstr1);
-      SysFreeString(bstr2);
-      // Get IO Value
-      bCap_VariableGetValue(fd, hVar, &vntRet);
-      ioVal = vntRet.lVal;
-      VariantClear(&vntRet);
-      
       // Get robot handle
       bstr1 = SysAllocString(L"Robot"); // Name
       bstr2 = SysAllocString(L"");    // Option
@@ -128,14 +117,11 @@ int main(int argc, char **argv)
           VariantClear(&vntParam);
           VariantClear(&vntRet);
           
-          // Change slvRecvFormat
-          bstr1 = SysAllocString(L"slvRecvFormat");
+          // Change slvSendFormat
+          bstr1 = SysAllocString(L"slvSendFormat");
           VariantInit(&vntParam);
-          vntParam.vt = (VT_I4 | VT_ARRAY);
-          vntParam.parray = SafeArrayCreateVector(VT_I4, 0, 2);
-          SafeArrayAccessData(vntParam.parray, (void **)&plData);
-          plData[0] = SlaveMode::Ptype; 
-          plData[1] = 0;
+          vntParam.vt = VT_I4;
+          vntParam.lVal = SlaveMode::MiniIO;
           bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
           SysFreeString(bstr1);
           VariantClear(&vntParam);
@@ -153,55 +139,38 @@ int main(int argc, char **argv)
 
           // Send commands
           bstr1 = SysAllocString(L"slvMove");
+          /* VT_VARIANT | VT_ARRAY */
           VariantInit(&vntParam);
-          vntParam.vt = (VT_R8 | VT_ARRAY);
-          vntParam.parray = SafeArrayCreateVector(VT_R8, 0, 8);
+          vntParam.vt = (VT_VARIANT | VT_ARRAY);
+          vntParam.parray = SafeArrayCreateVector(VT_VARIANT, 0, 2);
+
+          /* [0] VT_R8 | VT_ARRAY */
+          SafeArrayAccessData(vntParam.parray, (void**)&pvntData);
+          pvntData[0].vt = (VT_R8 | VT_ARRAY);
+          pvntData[0].parray = SafeArrayCreateVector(VT_R8, 0, 8);
+          SafeArrayAccessData(pvntData[0].parray, (void**)&pdData);
+          for(i = 0; i < 8; i++) {
+            pdData[i] = dAng[i];
+          }
+          SafeArrayUnaccessData(pvntData[0].parray);
+
+          /* [1] VT_I4 */
+          pvntData[1].vt = VT_I4;
+          pvntData[1].lVal = 0x1000000;
+
+          SafeArrayUnaccessData(vntParam.parray);
+          
           ros::Rate rate(125);
           while (ros::ok())
           {
-            SafeArrayAccessData(vntParam.parray, (void **)&pdData);
-            memcpy(pdData, dAng, 8 * sizeof(double));
-            SafeArrayUnaccessData(vntParam.parray);
             VariantInit(&vntRet);
-            hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+            //~ hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
             VariantClear(&vntRet);
             // Sleep
             rate.sleep();
           }
-
-          // Stop robot
-          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
-          SysFreeString(bstr1);
-          VariantClear(&vntParam);
-          VariantClear(&vntRet);
           
-          // Stop slave mode
-          bstr1 = SysAllocString(L"slvChangeMode");
-          VariantInit(&vntParam);
-          vntParam.vt = VT_I4;
-          vntParam.lVal = 0;
-          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
-          SysFreeString(bstr1);
           VariantClear(&vntParam);
-          VariantClear(&vntRet);
-          
-          // Put IO Value
-          VariantInit(&vntParam);
-          vntParam.vt = VT_I4;
-          vntParam.lVal = (ioVal == 0) ? 1 : 0;
-          bCap_VariablePutValue(fd, hVar, vntParam);
-          VariantClear(&vntParam);
-          
-          // Start slave mode
-          bstr1 = SysAllocString(L"slvChangeMode");
-          VariantInit(&vntParam);
-          vntParam.vt = VT_I4;
-          vntParam.lVal = SlaveMode::J1;
-          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
-          SysFreeString(bstr1);
-          VariantClear(&vntParam);
-          VariantClear(&vntRet);
-          
           // Stop slave mode
           bstr1 = SysAllocString(L"slvChangeMode");
           VariantInit(&vntParam);
@@ -234,8 +203,6 @@ int main(int argc, char **argv)
         // Release robot handle
         bCap_RobotRelease(fd, &hRob);
       }
-      // Release IO handle
-      bCap_VariableRelease(fd, &hVar);
       // Disconnect RC8
       bCap_ControllerDisconnect(fd, &hCtrl);
     }
