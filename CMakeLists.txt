@@ -49,7 +49,11 @@ add_library(bcap_server
 target_link_libraries(bcap_server ${catkin_LIBRARIES})
 
 # Tests
-add_executable(slave_mode tests/slave_mode.cpp)
-target_link_libraries(slave_mode bcap_client ${catkin_LIBRARIES})
 add_executable(change_digital_output tests/change_digital_output.cpp)
 target_link_libraries(change_digital_output bcap_client ${catkin_LIBRARIES})
+
+add_executable(close_connection tests/close_connection.cpp)
+target_link_libraries(close_connection bcap_client ${catkin_LIBRARIES})
+
+add_executable(slave_mode tests/slave_mode.cpp)
+target_link_libraries(slave_mode bcap_client ${catkin_LIBRARIES})

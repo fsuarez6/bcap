@@ -53,7 +53,7 @@ int main(int argc, char **argv)
   HRESULT hr;
 
   // Open connection
-  hr = bCap_Open_Client("tcp:192.168.0.21:5007", 1000, 3, &fd);
+  hr = bCap_Open_Client("udp:192.168.0.21:5007", 1000, 3, &fd);
 
   if(SUCCEEDED(hr)){
     // Send SERVICE_START packet
@@ -72,7 +72,17 @@ int main(int argc, char **argv)
     SysFreeString(bstr3);
     SysFreeString(bstr4);
     
+    // Clear previous errors
+    VariantInit(&vntParam);
+    bstr1 = SysAllocString(L"ClearError");
+    vntParam.vt = VT_EMPTY;
+    hr = bCap_ControllerExecute(fd, hCtrl, bstr1, vntParam, &vntRet);
+    SysFreeString(bstr1);
+    VariantClear(&vntParam);
+    VariantClear(&vntRet);
+    
     if(SUCCEEDED(hr)){
+      
       // Get robot handle
       bstr1 = SysAllocString(L"Robot"); // Name
       bstr2 = SysAllocString(L"");    // Option
@@ -122,6 +132,16 @@ int main(int argc, char **argv)
           VariantInit(&vntParam);
           vntParam.vt = VT_I4;
           vntParam.lVal = SlaveMode::MiniIO;
+          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          SysFreeString(bstr1);
+          VariantClear(&vntParam);
+          VariantClear(&vntRet);
+          
+          // Change slvRecvFormat
+          bstr1 = SysAllocString(L"slvRecvFormat");
+          VariantInit(&vntParam);
+          vntParam.vt = VT_I4;
+          vntParam.lVal = SlaveMode::Jtype | SlaveMode::MiniIO;
           bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
           SysFreeString(bstr1);
           VariantClear(&vntParam);
