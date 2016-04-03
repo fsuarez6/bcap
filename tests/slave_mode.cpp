@@ -43,7 +43,7 @@ namespace SlaveMode
 int main(int argc, char **argv)
 {
   ros::init (argc, argv, "slave_mode");
-  ros::NodeHandle nh_;
+  ros::NodeHandle nh, nh_private("~");
   int i, fd;
   long *plData;
   uint32_t hCtrl, hRob;
@@ -52,8 +52,15 @@ int main(int argc, char **argv)
   VARIANT vntParam, vntRet, *pvntData;
   HRESULT hr;
 
+  std::string ip_address;
+  nh_private.param("ip", ip_address, std::string("192.168.0.11"));
+  if (!nh_private.hasParam("ip"))
+    ROS_WARN_STREAM("Parameter [~ip] not found, using default: " << ip_address);
+  
   // Open connection
-  hr = bCap_Open_Client("udp:192.168.0.21:5007", 1000, 3, &fd);
+  std::string connect;
+  connect = "udp:" + ip_address + ":5007";
+  hr = bCap_Open_Client(connect.c_str(), 1000, 3, &fd);
 
   if(SUCCEEDED(hr)){
     // Send SERVICE_START packet

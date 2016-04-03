@@ -22,10 +22,17 @@ int main(int argc, char **argv)
   // Read parameters
   nh_private.param("controller", alternative_handle, 2);
   if (!nh_private.hasParam("controller"))
-    ROS_WARN_STREAM("Parameter [controller] not found, using default: " << alternative_handle);
+    ROS_WARN_STREAM("Parameter [~controller] not found, using default: " << alternative_handle);
+  
+  std::string ip_address;
+  nh_private.param("ip", ip_address, std::string("192.168.0.11"));
+  if (!nh_private.hasParam("ip"))
+    ROS_WARN_STREAM("Parameter [~ip] not found, using default: " << ip_address);
   
   // Open connection
-  hr = bCap_Open_Client("udp:192.168.0.21:5007", 1000, 3, &socket_);
+  std::string connect;
+  connect = "udp:" + ip_address + ":5007";
+  hr = bCap_Open_Client(connect.c_str(), 1000, 3, &socket_);
   if(SUCCEEDED(hr)){
     // Start b-CAP service
     bCap_ServiceStart(socket_, NULL);
