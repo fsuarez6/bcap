@@ -21,12 +21,13 @@ namespace SlaveMode
     P2 = 0x201,
     J2 = 0x202,
     T2 = 0x203
-  };  
+  };
+  
   enum Formats
   { 
     None          = 0x0000,
     HandIO        = 0x0020,
-    Electric      = 0x0020,
+    Electric      = 0x0040,
     MiniIO        = 0x0100,
     MiniAndHandIO = 0x0120,
     UserIO        = 0x0200,
@@ -80,10 +81,12 @@ int main(int argc, char **argv)
     SysFreeString(bstr4);
     
     // Clear previous errors
-    VariantInit(&vntParam);
     bstr1 = SysAllocString(L"ClearError");
-    vntParam.vt = VT_EMPTY;
+    vntParam.bstrVal = SysAllocString(L"");
+    vntParam.vt = VT_BSTR;
     hr = bCap_ControllerExecute(fd, hCtrl, bstr1, vntParam, &vntRet);
+    if (FAILED(hr))
+      ROS_ERROR("[ClearError] command failed");
     SysFreeString(bstr1);
     VariantClear(&vntParam);
     VariantClear(&vntRet);
@@ -100,13 +103,11 @@ int main(int argc, char **argv)
       if(SUCCEEDED(hr)){
         // Get arm control authority
         bstr1 = SysAllocString(L"Takearm");
-        VariantInit(&vntParam);
-        vntParam.vt = (VT_I4 | VT_ARRAY);
-        vntParam.parray = SafeArrayCreateVector(VT_I4, 0, 2);
-        SafeArrayAccessData(vntParam.parray, (void **)&plData);
-        plData[0] = 0; plData[1] = 1;
-        SafeArrayUnaccessData(vntParam.parray);
+        vntParam.bstrVal = SysAllocString(L"");
+        vntParam.vt = VT_BSTR;
         hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+        if (FAILED(hr))
+          ROS_ERROR("[Takearm] command failed");
         SysFreeString(bstr1);
         VariantClear(&vntParam);
         VariantClear(&vntRet);
@@ -114,19 +115,22 @@ int main(int argc, char **argv)
         if(SUCCEEDED(hr)){
           // Motor ON
           bstr1 = SysAllocString(L"Motor");
-          VariantInit(&vntParam);
-          vntParam.vt = VT_I4;
-          vntParam.lVal = 1;
-          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          vntParam.bstrVal = SysAllocString(L"1");
+          vntParam.vt = VT_BSTR;
+          hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          if FAILED(hr)
+            ROS_ERROR("[Motor] command failed");;
           SysFreeString(bstr1);
           VariantClear(&vntParam);
           VariantClear(&vntRet);
 
           // Get current angles
           bstr1 = SysAllocString(L"CurJnt");
-          VariantInit(&vntParam);
-          vntParam.vt = VT_EMPTY;
-          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          vntParam.bstrVal = SysAllocString(L"");
+          vntParam.vt = VT_BSTR;
+          hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          if (FAILED(hr))
+            ROS_ERROR("[CurJnt] command failed");
           SafeArrayAccessData(vntRet.parray, (void **)&pdData);
           memcpy(dAng, pdData, 8 * sizeof(double));
           SafeArrayUnaccessData(vntRet.parray);
@@ -136,30 +140,34 @@ int main(int argc, char **argv)
           
           // Change slvSendFormat
           bstr1 = SysAllocString(L"slvSendFormat");
-          VariantInit(&vntParam);
           vntParam.vt = VT_I4;
-          vntParam.lVal = SlaveMode::MiniIO;
-          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          long slvsend_format = SlaveMode::MiniIO;
+          vntParam.lVal = slvsend_format;
+          hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          if (FAILED(hr))
+            ROS_ERROR("[slvSendFormat] command failed");
           SysFreeString(bstr1);
           VariantClear(&vntParam);
           VariantClear(&vntRet);
           
           // Change slvRecvFormat
           bstr1 = SysAllocString(L"slvRecvFormat");
-          VariantInit(&vntParam);
           vntParam.vt = VT_I4;
           vntParam.lVal = SlaveMode::Jtype | SlaveMode::MiniIO;
-          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          if (FAILED(hr))
+            ROS_ERROR("[slvRecvFormat] command failed");
           SysFreeString(bstr1);
           VariantClear(&vntParam);
           VariantClear(&vntRet);
           
           // Start slave mode
           bstr1 = SysAllocString(L"slvChangeMode");
-          VariantInit(&vntParam);
           vntParam.vt = VT_I4;
           vntParam.lVal = SlaveMode::J1;
-          bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+          if (FAILED(hr))
+            ROS_ERROR("[slvChangeMode] command failed");
           SysFreeString(bstr1);
           VariantClear(&vntParam);
           VariantClear(&vntRet);
@@ -167,7 +175,6 @@ int main(int argc, char **argv)
           // Send commands
           bstr1 = SysAllocString(L"slvMove");
           /* VT_VARIANT | VT_ARRAY */
-          VariantInit(&vntParam);
           vntParam.vt = (VT_VARIANT | VT_ARRAY);
           vntParam.parray = SafeArrayCreateVector(VT_VARIANT, 0, 2);
 
@@ -190,9 +197,10 @@ int main(int argc, char **argv)
           ros::Rate rate(125);
           while (ros::ok())
           {
-            VariantInit(&vntRet);
-            hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
-            VariantClear(&vntRet);
+            if (slvsend_format == SlaveMode::MiniIO) {
+              hr = bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
+              VariantClear(&vntRet);
+            }
             // Sleep
             rate.sleep();
           }
@@ -200,9 +208,8 @@ int main(int argc, char **argv)
           VariantClear(&vntParam);
           // Stop slave mode
           bstr1 = SysAllocString(L"slvChangeMode");
-          VariantInit(&vntParam);
-          vntParam.vt = VT_I4;
-          vntParam.lVal = 0;
+          vntParam.bstrVal = SysAllocString(L"0");
+          vntParam.vt = VT_BSTR;
           bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
           SysFreeString(bstr1);
           VariantClear(&vntParam);
@@ -210,9 +217,8 @@ int main(int argc, char **argv)
           
           // Motor off
           bstr1 = SysAllocString(L"Motor");
-          VariantInit(&vntParam);
-          vntParam.vt = VT_I4;
-          vntParam.lVal = 0;
+          vntParam.bstrVal = SysAllocString(L"0");
+          vntParam.vt = VT_BSTR;
           bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
           SysFreeString(bstr1);
           VariantClear(&vntParam);
@@ -220,8 +226,8 @@ int main(int argc, char **argv)
           
           // Release arm control authority
           bstr1 = SysAllocString(L"Givearm");
-          VariantInit(&vntParam);
-          vntParam.vt = VT_EMPTY;
+          vntParam.bstrVal = SysAllocString(L"");
+          vntParam.vt = VT_BSTR;
           bCap_RobotExecute(fd, hRob, bstr1, vntParam, &vntRet);
           SysFreeString(bstr1);
           VariantClear(&vntParam);
