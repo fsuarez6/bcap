@@ -16,6 +16,7 @@ catkin_package(
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
+find_package(Boost REQUIRED system filesystem date_time thread)
 
 # Definitions
 add_definitions(-D_USE_LINUX_API)

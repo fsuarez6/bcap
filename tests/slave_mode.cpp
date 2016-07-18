@@ -1,9 +1,7 @@
-// Always goes first
-#define _CUSTOM_UINT64
-#include "bcap/stdint.h"
 // ROS
 #include <ros/ros.h>
-// bCAP (Always last)
+// bCAP
+#include "bcap/stdint.h"
 #include "bcap/bcap_client.h"
 
 #define E_BUF_FULL  (0x83201483)
