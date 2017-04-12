@@ -1,12 +1,12 @@
 <package>
   <name>bcap</name>
-  <version>0.1.0</version>
+  <version>0.0.0</version>
   <description>
-   The bcap library
+   bCAP library as a ROS package
   </description>
-  <maintainer email="fsuarez.ruiz@pmail.ntu.edu.sg">Francisco Suarez Ruiz</maintainer>
-  <license>BSD</license>
-  <author email="fsuarez.ruiz@pmail.ntu.edu.sg">Francisco Suarez Ruiz</author>
+  <maintainer email="fsuarez6@gmail.com">Francisco Suarez Ruiz</maintainer>
+  <license>BSD-3-Clause</license>
+  <author email="fsuarez6@gmail.com">Francisco Suarez Ruiz</author>
   <url type="website">https://github.com/fsuarez6/bcap</url>
   <url type="bugtracker">https://github.com/fsuarez6/bcap/issues</url>
   <url type="repository">https://github.com/fsuarez6/bcap</url>

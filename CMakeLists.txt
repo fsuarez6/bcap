@@ -50,11 +50,31 @@ add_library(bcap_server
 target_link_libraries(bcap_server ${catkin_LIBRARIES})
 
 # Tests
-add_executable(change_digital_output tests/change_digital_output.cpp)
+add_executable(change_digital_output nodes/change_digital_output.cpp)
 target_link_libraries(change_digital_output bcap_client ${catkin_LIBRARIES})
 
-add_executable(close_connection tests/close_connection.cpp)
+add_executable(close_connection nodes/close_connection.cpp)
 target_link_libraries(close_connection bcap_client ${catkin_LIBRARIES})
 
-add_executable(slave_mode tests/slave_mode.cpp)
-target_link_libraries(slave_mode bcap_client ${catkin_LIBRARIES})
+add_executable(slave_mode_example nodes/slave_mode_example.cpp)
+target_link_libraries(slave_mode_example bcap_client ${catkin_LIBRARIES})
+
+# Install
+install(
+  TARGETS 
+    bcap_client 
+    bcap_server
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+
+install(
+  TARGETS 
+    change_digital_output
+    close_connection
+    slave_mode_example
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
